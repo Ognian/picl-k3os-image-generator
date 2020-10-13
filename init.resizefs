@@ -37,12 +37,7 @@ resize2fs $ROOTDEVICE
 sleep 5
 
 echo "== Setting proper init... =="
-MMCROOT_REGEX="^(\/dev\/mmc)"
-if [[ $ROOTDISK == $MMCROOT_REGEX ]]; then
-  ROOTPARTITION=${ROOTDISK}p1
-else
-  ROOTPARTITION=${ROOTDISK}1
-fi
+ROOTPARTITION=$(lsblk -o NAME -lnp ${ROOTDISK} | awk 'NR==2')
 if [ "$IMAGE_TYPE" = "raspberrypi" ]; then
 	mount ${ROOTPARTITION} /boot
 	sed -i 's# init=/sbin/init.resizefs# init=/sbin/init.preinit#' /boot/cmdline.txt
